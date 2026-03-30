@@ -1,5 +1,5 @@
 - name: RedOS Upgrade
-  hosts: redos
+  hosts: all
   gather_facts: yes
   become: yes
  
