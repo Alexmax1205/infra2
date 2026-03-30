@@ -1,1 +1,40 @@
+- name: RedOS Upgrade
+  hosts: redos
+  gather_facts: yes
+  become: yes
+ 
+  tasks:
+    - name: Upgrade RHEL systems with DNF
+      block:
+        - name: Get packages that can be upgraded with DNF
+          ansible.builtin.dnf:
+            list: upgrades
+            state: latest
+            update_cache: yes 
+          register: reg_dnf_output_all
 
+#       - name: List packages that can be upgraded with DNF
+#         ansible.builtin.debug: 
+#           msg: "{{ reg_dnf_output_all.results | map(attribute='name') | list }}"
+
+        - name: Upgrade packages with DNF
+          become: yes
+          ansible.builtin.dnf:
+            name: '*'
+            state: latest
+            update_cache: yes
+            update_only: no
+          register: reg_upgrade_ok
+
+        - name: Print DNF errors if upgrade failed
+          ansible.builtin.debug:
+            msg: "Packages upgrade failed"
+          when: reg_upgrade_ok is not defined
+
+        - name: Install dnf-utils
+          become: yes
+          ansible.builtin.dnf:
+            name: 'dnf-utils'
+            state: latest
+            update_cache: yes
+          when: reg_dnf_output_all is defined
