@@ -1,0 +1,12 @@
+- name: recerche
+  hosts: all
+  become: yes
+
+  tasks:
+   - name: Gather the package facts
+     ansible.builtin.service_facts:
+
+   - name: Print all available packages
+     debug:
+       var: ansible_facts.services
+       

@@ -1,0 +1,13 @@
+#собрать данные о сервисах
+- hosts: 192.168.1.76
+  gather_facts: no
+  user: root
+  tasks:
+    - name: Get service facts
+      setup:
+        filter: 'board_version'
+    - name: Print all available facts
+      debug:
+        var: ansible_facts
+
+

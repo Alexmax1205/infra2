@@ -1,0 +1,10 @@
+- name: recerche
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Обследование
+      setup:
+
+    - name: вывод fqdn
+      debug:

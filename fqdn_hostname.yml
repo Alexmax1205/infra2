@@ -1,0 +1,17 @@
+---
+- name: recerche
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Обследование
+      setup:
+
+    - name: вывод fqdn
+      debug:
+        var: ansible_fqdn
+
+    - name: вывод имени хоста
+      debug:
+        var: ansible_hostname
+

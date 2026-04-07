@@ -1,0 +1,55 @@
+---
+- name: Repository Configuration and Software Management
+  hosts: all
+  become: true
+  vars:
+    custom_pkg: httpd
+  tasks:
+    - name: Gather Package Facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Show Package Facts for the custom package (initial check)
+      ansible.builtin.debug:
+        var: ansible_facts['packages'][custom_pkg]
+      when: custom_pkg in ansible_facts['packages']
+
+    - name: Ensure EPEL repository is configured
+      ansible.builtin.yum_repository:
+        name: RedOS-Base_new.repo
+        description: base Packages for redOs 8
+        file: RedOS-Base_new.repo
+        baseurl: https://repo1.red-soft.ru/redos/8.0/$basearch/os
+        gpgcheck: no
+        enabled: yes
+        state: present
+
+    - name: Ensure EPEL repository is configured
+      ansible.builtin.yum_repository:
+        name: RedOS-updates_new.repo
+        description: base Packages for redOs 8
+        file: RedOS-update_new.repo
+        baseurl: https://repo1.red-soft.ru/redos/8.0/$basearch/updates
+        gpgcheck: no
+        enabled: yes
+        state: present
+
+
+    - name: Install the custom package
+      ansible.builtin.dnf:
+        name: "{{ custom_pkg }}"
+        state: present
+
+    - name: Gather Package Facts (after installation)
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Show Package Facts for the custom package (post-installation)
+      ansible.builtin.debug:
+        var: ansible_facts['packages'][custom_pkg]
+      when: custom_pkg in ansible_facts['packages']
+
+    - name: Display installed package version
+      ansible.builtin.debug:
+        msg: "{{ custom_pkg }} version {{ ansible_facts['packages'][custom_pkg][0]['version'] }} is installed"
+      when: custom_pkg in ansible_facts['packages']

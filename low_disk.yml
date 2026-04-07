@@ -1,0 +1,18 @@
+- name: место на диске
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Выполнить команду
+      shell: df -h / | tail -1
+      register: disk_info
+
+    - name: Использовать результат
+      debug:
+        var: disk_info.stdout
+
+    - name: Условие на основе результата
+      debug:
+        msg: "Мало места!"
+      when: disk_info.stdout | regex_search('1[0-9]%')
+
